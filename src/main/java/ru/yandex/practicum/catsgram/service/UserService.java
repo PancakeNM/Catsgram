@@ -55,11 +55,11 @@ public class UserService {
         throw new NotFoundException("Пользователь не найден.");
     }
 
-    public Optional<User> findUserById(Long id) {
+    public User findUserById(Long id) {
         if (users.containsKey(id)) {
-            return Optional.of(users.get(id));
+            return users.get(id);
         } else {
-            return Optional.empty();
+            throw new NotFoundException("Пользователь с ID " + id + " не найден.");
         }
     }
 
