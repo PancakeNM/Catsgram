@@ -27,7 +27,7 @@ public class PostController {
         if (!(sort.equals("asc") || sort.equals("desc"))){
             throw new IllegalArgumentException();
         }
-        return postService.findByFilter(page, size , sort);
+        return postService.findAllByFilter(page, size , sort);
     }
 
     @GetMapping("/all")

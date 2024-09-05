@@ -1,18 +1,19 @@
 package ru.yandex.practicum.catsgram.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
+import ru.yandex.practicum.catsgram.exception.ParameterNotValidException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.util.SortOrder;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -30,7 +31,16 @@ public class PostService {
         return posts.values();
     }
 
-    public Collection<Post> findByFilter(int from, int size, String sort) {
+    public Collection<Post> findAllByFilter(int from, int size, String sort) {
+        if (!sort.equals("asc") || !sort.equals("desc")) {
+            throw new ParameterNotValidException(sort, "Сортировка должна быть либо asc, либо desc");
+        }
+        if (size <= 0) {
+            throw new ParameterNotValidException(String.valueOf(size), "Некорректный размер выборки. Размер должен быть больше нуля");
+        }
+        if (from < 0) {
+            throw new ParameterNotValidException(String.valueOf(from), "Нужно выбрать неотрицательное значение, с которого производится поиск постов.");
+        }
         SortOrder sortOrder = SortOrder.from(sort);
         return posts.values().stream()
                 .sorted((post1,post2) -> {
@@ -45,6 +55,7 @@ public class PostService {
                 .toList();
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     public Post create(Post post) {
         if (post.getDescription() == null || post.getDescription().isBlank()) {
             throw new ConditionsNotMetException("Описание не может быть пустым");
