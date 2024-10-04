@@ -24,10 +24,10 @@ public class PostController {
         if (page < 1 || size <= 0) {
             throw new IllegalArgumentException();
         }
-        if (!(sort.equals("asc") || sort.equals("desc"))){
+        if (!(sort.equals("asc") || sort.equals("desc"))) {
             throw new IllegalArgumentException();
         }
-        return postService.findAllByFilter(page, size , sort);
+        return postService.findAllByFilter(page, size, sort);
     }
 
     @GetMapping("/all")
